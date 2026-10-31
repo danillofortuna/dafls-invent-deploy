@@ -1,0 +1,6 @@
+# HTTPS na frente do app (perfil "https" do compose). O Caddy tira o certificado do Let's Encrypt sozinho para
+# INVENT_DOMINIO: o domínio precisa apontar para o servidor e as portas 80 e 443 precisam estar abertas.
+{$INVENT_DOMINIO} {
+	encode gzip
+	reverse_proxy app:9000
+}

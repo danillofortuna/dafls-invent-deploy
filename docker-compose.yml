@@ -1,0 +1,66 @@
+# DAFLs Invent: app (porta 9000) e Postgres em containers separados. Os segredos vêm do .env (gere com ./gerar-env.sh).
+name: dafls-invent
+
+services:
+  banco:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: invent
+      POSTGRES_USER: invent
+      POSTGRES_PASSWORD: ${INVENT_BANCO_SENHA:?defina INVENT_BANCO_SENHA no .env (./gerar-env.sh)}
+      TZ: ${TZ:-America/Sao_Paulo}
+    command: >
+      postgres
+      -c shared_buffers=${INVENT_PG_SHARED_BUFFERS:-512MB}
+      -c work_mem=${INVENT_PG_WORK_MEM:-32MB}
+    volumes:
+      - dados:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U invent -d invent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build: .
+    # imagem local (build a partir do jar desta pasta) ou do registro: INVENT_IMAGE=danillofortuna/dafls-invent:<tag>
+    image: ${INVENT_IMAGE:-dafls-invent:atual}
+    restart: unless-stopped
+    depends_on:
+      banco:
+        condition: service_healthy
+    ports:
+      # 9000 = todas as interfaces (rede local com coletores). Atrás de um proxy na mesma máquina (Caddy do perfil
+      # https, Cloudflare Tunnel), use INVENT_PORTA=127.0.0.1:9000: o app só responde no localhost do servidor.
+      - "${INVENT_PORTA:-9000}:9000"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://banco:5432/invent
+      SPRING_DATASOURCE_USERNAME: invent
+      SPRING_DATASOURCE_PASSWORD: ${INVENT_BANCO_SENHA}
+      INVENT_JWT_SEGREDO: ${INVENT_JWT_SEGREDO:?defina INVENT_JWT_SEGREDO no .env (./gerar-env.sh)}
+      INVENT_CHAVE_CIFRA: ${INVENT_CHAVE_CIFRA:?defina INVENT_CHAVE_CIFRA no .env (./gerar-env.sh)}
+      INVENT_ADMIN_SENHA: ${INVENT_ADMIN_SENHA:-}
+      TZ: ${TZ:-America/Sao_Paulo}
+      # opções extras da JVM (vazio = padrão do Java 21); mudar só exige recriar o app, não reconstruir a imagem
+      JAVA_TOOL_OPTIONS: ${JAVA_TOOL_OPTIONS:-}
+
+  # Só com --profile https (servidor na internet, com domínio): HTTPS automático na frente do app.
+  https:
+    image: caddy:2
+    profiles: ["https"]
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      INVENT_DOMINIO: ${INVENT_DOMINIO:-}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - certificados:/data
+
+volumes:
+  dados:
+  certificados:
