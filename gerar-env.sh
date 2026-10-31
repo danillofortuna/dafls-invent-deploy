@@ -33,6 +33,8 @@ INVENT_ADMIN_SENHA=$ADMIN_SENHA
 # Porta do painel e da API. 9000 = todas as interfaces (rede local com coletores). Com proxy na mesma máquina
 # (--profile https ou Cloudflare Tunnel), use 127.0.0.1:9000 para não expor o app na interface pública.
 INVENT_PORTA=${INVENT_PORTA_PADRAO}
+# Métricas do Prometheus (/actuator/prometheus): sempre no localhost. Outra instalação no mesmo servidor usa outra porta.
+INVENT_PORTA_METRICAS=127.0.0.1:9101
 # Domínio do servidor para o HTTPS automático (só com --profile https), ex.: invent.suaempresa.com.br
 INVENT_DOMINIO=
 TZ=America/Sao_Paulo

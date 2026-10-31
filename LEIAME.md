@@ -64,6 +64,11 @@ Ele confia nesses cabeçalhos venham de onde vierem; por isso, atrás de proxy, 
 (só o proxy alcança o app). Numa rede local sem proxy, nada no sistema depende desses cabeçalhos (o bloqueio de
 login é por login, não por IP).
 
+## Métricas (Prometheus)
+O app expõe `/actuator/prometheus` e `/actuator/health` na porta **9101**, separada da 9000, sem login. O compose a
+publica só em `127.0.0.1` (`INVENT_PORTA_METRICAS`): **nunca a aponte no proxy nem no túnel**. Na 9000 essas rotas não
+existem. Com duas instalações no mesmo servidor, cada uma usa uma porta (ex.: `127.0.0.1:9102` nos testes).
+
 ## Documentação da API (Swagger)
 Desligada nesta instalação (`SPRINGDOC_API_DOCS_ENABLED` e `SPRINGDOC_SWAGGER_UI_ENABLED` = `"false"` no compose):
 `/swagger-ui.html` e `/v3/api-docs` dão 404. Para ligar num ambiente de teste, troque os dois para `"true"` e rode

@@ -34,6 +34,8 @@ services:
       # 9000 = todas as interfaces (rede local com coletores). Atrás de um proxy na mesma máquina (Caddy do perfil
       # https, Cloudflare Tunnel), use INVENT_PORTA=127.0.0.1:9000: o app só responde no localhost do servidor.
       - "${INVENT_PORTA:-9000}:9000"
+      # métricas para o Prometheus (/actuator/prometheus): só no localhost, nunca pelo proxy público
+      - "${INVENT_PORTA_METRICAS:-127.0.0.1:9101}:9101"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://banco:5432/invent
       SPRING_DATASOURCE_USERNAME: invent
