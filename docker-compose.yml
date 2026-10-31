@@ -47,6 +47,8 @@ services:
       # sem a documentação interativa da API (Swagger UI e /v3/api-docs) na instalação
       SPRINGDOC_API_DOCS_ENABLED: "false"
       SPRINGDOC_SWAGGER_UI_ENABLED: "false"
+      # atrás de proxy (Cloudflare Tunnel, Caddy): o Spring usa X-Forwarded-Proto/Host/For para o endereço original
+      SERVER_FORWARD_HEADERS_STRATEGY: framework
 
   # Só com --profile https (servidor na internet, com domínio): HTTPS automático na frente do app.
   https:

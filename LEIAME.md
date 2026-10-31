@@ -57,6 +57,13 @@ TAG=$(date +%Y-%m-%d)-$(git rev-parse --short HEAD)
 docker buildx build --platform linux/amd64 -t danillofortuna/dafls-invent:$TAG -t danillofortuna/dafls-invent:latest --push dist/instalacao
 ```
 
+## Atrás de proxy
+O compose define `SERVER_FORWARD_HEADERS_STRATEGY: framework`: o Spring usa os cabeçalhos `X-Forwarded-Proto`,
+`X-Forwarded-Host` e `X-Forwarded-For` do proxy (Cloudflare Tunnel, Caddy) como endereço original da requisição.
+Ele confia nesses cabeçalhos venham de onde vierem; por isso, atrás de proxy, mantenha `INVENT_PORTA=127.0.0.1:9000`
+(só o proxy alcança o app). Numa rede local sem proxy, nada no sistema depende desses cabeçalhos (o bloqueio de
+login é por login, não por IP).
+
 ## Documentação da API (Swagger)
 Desligada nesta instalação (`SPRINGDOC_API_DOCS_ENABLED` e `SPRINGDOC_SWAGGER_UI_ENABLED` = `"false"` no compose):
 `/swagger-ui.html` e `/v3/api-docs` dão 404. Para ligar num ambiente de teste, troque os dois para `"true"` e rode
