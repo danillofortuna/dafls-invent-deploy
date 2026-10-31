@@ -50,6 +50,11 @@ A imagem fica no repositório privado `danillofortuna/dafls-invent` (`linux/amd6
 docker compose pull app
 docker compose up -d --no-deps app     # na primeira instalação: docker compose up -d
 ```
+Para atualizar uma instalação que já usa a imagem, o `atualizar.sh` faz tudo: backup, download da imagem, `INVENT_IMAGE`
+no `.env` e recriação só do app (se a imagem não baixar, para sem mexer no `.env`):
+```sh
+sudo ./atualizar.sh danillofortuna/dafls-invent:<tag>
+```
 Sem `INVENT_IMAGE`, o compose usa a imagem local `dafls-invent:atual`, construída a partir do jar desta pasta.
 Gerar e enviar uma imagem nova (no Mac, depois do `./empacotar.sh`):
 ```sh
