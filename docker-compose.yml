@@ -44,6 +44,9 @@ services:
       TZ: ${TZ:-America/Sao_Paulo}
       # opções extras da JVM (vazio = padrão do Java 21); mudar só exige recriar o app, não reconstruir a imagem
       JAVA_TOOL_OPTIONS: ${JAVA_TOOL_OPTIONS:-}
+      # sem a documentação interativa da API (Swagger UI e /v3/api-docs) na instalação
+      SPRINGDOC_API_DOCS_ENABLED: "false"
+      SPRINGDOC_SWAGGER_UI_ENABLED: "false"
 
   # Só com --profile https (servidor na internet, com domínio): HTTPS automático na frente do app.
   https:

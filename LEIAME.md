@@ -57,6 +57,11 @@ TAG=$(date +%Y-%m-%d)-$(git rev-parse --short HEAD)
 docker buildx build --platform linux/amd64 -t danillofortuna/dafls-invent:$TAG -t danillofortuna/dafls-invent:latest --push dist/instalacao
 ```
 
+## Documentação da API (Swagger)
+Desligada nesta instalação (`SPRINGDOC_API_DOCS_ENABLED` e `SPRINGDOC_SWAGGER_UI_ENABLED` = `"false"` no compose):
+`/swagger-ui.html` e `/v3/api-docs` dão 404. Para ligar num ambiente de teste, troque os dois para `"true"` e rode
+`docker compose up -d --no-deps app`.
+
 ## Memória e CPU
 Nenhum container tem limite de CPU ou memória. A JVM usa a ergonomia padrão do Java 21: heap máximo de 1/4 da
 memória visível ao container (numa VPS de 32 GB, ~8 GB; ela só ocupa o que precisa). Para ajustar depois, sem
