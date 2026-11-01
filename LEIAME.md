@@ -56,9 +56,11 @@ no `.env` e recriação só do app (se a imagem não baixar, para sem mexer no `
 sudo ./atualizar.sh danillofortuna/dafls-invent:<tag>
 ```
 Sem `INVENT_IMAGE`, o compose usa a imagem local `dafls-invent:atual`, construída a partir do jar desta pasta.
-Gerar e enviar uma imagem nova (no Mac, depois do `./empacotar.sh`):
+Gerar e enviar uma imagem nova (no Mac, depois do `./empacotar.sh`). A tag leva o commit do backend e o da web, e nunca
+pode repetir; antes de enviar, confira com `docker buildx imagetools inspect danillofortuna/dafls-invent:$TAG`, que deve
+responder que a tag não existe:
 ```sh
-TAG=$(date +%Y-%m-%d)-$(git rev-parse --short HEAD)
+TAG=$(date +%Y-%m-%d)-$(git rev-parse --short HEAD)-$(git -C ../invent-front rev-parse --short HEAD)
 docker buildx build --platform linux/amd64 -t danillofortuna/dafls-invent:$TAG -t danillofortuna/dafls-invent:latest --push dist/instalacao
 ```
 
